@@ -1,0 +1,51 @@
+# Binaries
+/bin/
+/build/
+/dist/
+/out/
+
+# Go build artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go workspace
+go.work
+go.work.sum
+
+# Dependency directories
+vendor/
+
+# Logs
+*.log
+*.log.*
+
+# IDE/editor configs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Env/config
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Supabase related
+.supabase/
+
+# Coverage / testing
+coverage.out
+*.coverprofile
