@@ -7,16 +7,10 @@ import (
 	"time"
 
 	"github.com/anil-vinnakoti/blogger-app/internal/auth"
+	"github.com/anil-vinnakoti/blogger-app/internal/models"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
-
-// User model
-type User struct {
-	ID       uint   `gorm:"primaryKey"`
-	Username string `gorm:"unique"`
-	Password string // ⚠️ should be hashed in real app
-}
 
 // RegisterHandler - create new user
 func RegisterHandler(db *gorm.DB) gin.HandlerFunc {
@@ -31,9 +25,15 @@ func RegisterHandler(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		user := User{
-			Username: body.Username,
-			Password: body.Password, // ⚠️ hash this using bcrypt in production
+		hashed, err := auth.HashPassword(body.Password)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "could not hash password"})
+			return
+		}
+
+		user := models.User{
+			Username:     body.Username,
+			PasswordHash: hashed,
 		}
 
 		if err := db.Create(&user).Error; err != nil {
@@ -58,14 +58,13 @@ func LoginHandler(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		var user User
+		var user models.User
 		if err := db.First(&user, "username = ?", body.Username).Error; err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 			return
 		}
 
-		// ⚠️ In real app, compare hashed password with bcrypt
-		if user.Password != body.Password {
+		if !auth.CheckPassword(user.PasswordHash, body.Password) {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
 			return
 		}
