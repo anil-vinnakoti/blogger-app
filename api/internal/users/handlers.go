@@ -84,6 +84,17 @@ func LoginHandler(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+func GetUsers(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var users models.User
+		if err := db.Find(&users).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch users"})
+			return
+		}
+		c.IndentedJSON(http.StatusOK, users)
+	}
+}
+
 // Utility to generate random session IDs
 func generateSessionID() string {
 	b := make([]byte, 16)

@@ -22,6 +22,9 @@ func Setup(db *gorm.DB) *gin.Engine {
 	// Protected routes (session required)
 	api := r.Group("/api")
 	api.Use(auth.SessionMiddleware(db)) // ✅ only here
+
+	//protected routes
+	api.GET("/users", users.GetUsers(db))
 	{
 		// api.GET("/posts", posts.ListHandler(db))
 		// api.POST("/posts", posts.CreateHandler(db))
