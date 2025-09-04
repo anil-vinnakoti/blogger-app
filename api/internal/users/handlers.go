@@ -70,7 +70,7 @@ func LoginHandler(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		// Create new session
-		session := auth.Session{
+		session := models.Session{
 			ID:        generateSessionID(),
 			UserID:    user.ID,
 			ExpiresAt: time.Now().Add(24 * time.Hour),
@@ -95,7 +95,7 @@ func MeHandler(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		// 2. Find session in DB
-		var session auth.Session
+		var session models.Session
 		if err := db.First(&session, "id = ?", sessionID).Error; err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid session"})
 			return

@@ -4,15 +4,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/anil-vinnakoti/blogger-app/internal/models"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
-
-type Session struct {
-	ID        string `gorm:"primaryKey"`
-	UserID    uint
-	ExpiresAt time.Time
-}
 
 // Middleware to check session cookie
 func SessionMiddleware(db *gorm.DB) gin.HandlerFunc {
@@ -28,7 +23,7 @@ func SessionMiddleware(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		var session Session
+		var session models.Session
 		if err := db.First(&session, "id = ? AND expires_at > ?", sessionID, time.Now()).Error; err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid or expired session"})
 			return

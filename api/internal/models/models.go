@@ -10,6 +10,12 @@ type User struct {
 	Posts        []Post    `gorm:"foreignKey:UserID" json:"posts,omitempty"`
 }
 
+type Session struct {
+	ID        string `gorm:"primaryKey"`
+	UserID    uint
+	ExpiresAt time.Time
+}
+
 type Post struct {
 	ID        uint      `gorm:"primaryKey" json:"id"`
 	Title     string    `gorm:"not null" json:"title"`
