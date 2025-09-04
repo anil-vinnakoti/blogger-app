@@ -2,9 +2,11 @@ package router
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/anil-vinnakoti/blogger-app/internal/auth"
 	"github.com/anil-vinnakoti/blogger-app/internal/users"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -12,25 +14,29 @@ import (
 func Setup(db *gorm.DB) *gin.Engine {
 	r := gin.Default()
 
+	// ✅ Add CORS middleware
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173"}, // frontend origin
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true, // needed for cookies
+		MaxAge:           12 * time.Hour,
+	}))
+
 	// Home route
 	r.GET("/", handleHome)
 
-	// Public routes (no middleware)
-	r.POST("/register", users.RegisterHandler(db))
-	r.POST("/login", users.LoginHandler(db))
-
-	// Protected routes (session required)
 	api := r.Group("/api")
-	api.Use(auth.SessionMiddleware(db)) // ✅ only here
+	// Public routes
+	api.POST("/register", users.RegisterHandler(db))
+	api.POST("/login", users.LoginHandler(db))
 
-	//protected routes
+	// Protected routes
+	api.Use(auth.SessionMiddleware(db))
+
 	api.GET("/me", users.MeHandler(db))
 	api.GET("/users", users.GetUsers(db))
-	{
-		// api.GET("/posts", posts.ListHandler(db))
-		// api.POST("/posts", posts.CreateHandler(db))
-		// add update, delete later
-	}
 
 	return r
 }
