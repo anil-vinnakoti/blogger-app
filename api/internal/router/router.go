@@ -24,6 +24,7 @@ func Setup(db *gorm.DB) *gin.Engine {
 	api.Use(auth.SessionMiddleware(db)) // ✅ only here
 
 	//protected routes
+	api.GET("/me", users.MeHandler(db))
 	api.GET("/users", users.GetUsers(db))
 	{
 		// api.GET("/posts", posts.ListHandler(db))

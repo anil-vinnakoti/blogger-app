@@ -84,6 +84,44 @@ func LoginHandler(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// MeHandler - get current logged-in user from session
+func MeHandler(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// 1. Get session_id cookie
+		sessionID, err := c.Cookie("session_id")
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "not logged in"})
+			return
+		}
+
+		// 2. Find session in DB
+		var session auth.Session
+		if err := db.First(&session, "id = ?", sessionID).Error; err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid session"})
+			return
+		}
+
+		// 3. Check expiration
+		if time.Now().After(session.ExpiresAt) {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "session expired"})
+			return
+		}
+
+		// 4. Fetch the user
+		var user models.User
+		if err := db.First(&user, "id = ?", session.UserID).Error; err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "user not found"})
+			return
+		}
+
+		// 5. Return user (omit password hash)
+		c.JSON(http.StatusOK, gin.H{
+			"id":       user.ID,
+			"username": user.Username,
+		})
+	}
+}
+
 func GetUsers(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var users models.User
