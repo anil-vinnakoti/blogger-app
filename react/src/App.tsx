@@ -8,7 +8,7 @@ export default function App() {
   const { isAuthenticated, user } = useAuth();
 
   if (user === null && !isAuthenticated) {
-    return <p className="text-center mt-10">Checking session...</p>;
+    return <Login />;
   }
 
   return (

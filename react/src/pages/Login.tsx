@@ -17,7 +17,7 @@ export default function Login() {
       {
         onSuccess: () => {
           setIsAuthenticated(true);
-          navigate("/posts"); // redirect after login
+          navigate("/"); // redirect after login
         }
       }
     );

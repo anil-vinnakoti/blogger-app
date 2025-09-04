@@ -13,23 +13,27 @@ interface LoginCredentials {
 }
 
 export function useLogin() {
-  return useMutation<User, Error, LoginCredentials>(
-    async (credentials: LoginCredentials) => {
-      const { data } = await api.post<User>("/auth/login", credentials);
-      return data; // must match first generic (User)
+  return useMutation<User, Error, LoginCredentials>({
+    mutationFn: async (credentials: LoginCredentials) => {
+      console.log("hi");
+
+      const { data } = await api.post<User>("/login", credentials);
+      return data; // must match User
     }
-  );
+  });
 }
 
 // Logout mutation
 export function useLogout() {
-  return useMutation<void, Error, void>(async (): Promise<void> => {
-    await api.post("/auth/logout");
+  return useMutation<void, Error, void>({
+    mutationFn: async (): Promise<void> => {
+      await api.post("/auth/logout");
+    }
   });
 }
 
 // Session check (just async function, not a mutation)
 export async function checkSession(): Promise<User> {
-  const { data } = await api.get<User>("/auth/me");
+  const { data } = await api.get<User>("/me");
   return data;
 }
