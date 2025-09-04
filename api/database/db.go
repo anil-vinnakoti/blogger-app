@@ -17,7 +17,7 @@ func Connect(dsn string) (*gorm.DB, error) {
 	}
 
 	// Auto-migrate schema
-	if err := db.AutoMigrate(&models.User{}, &models.Post{}); err != nil {
+	if err := db.AutoMigrate(&models.User{}, &models.Post{}, models.Session{}); err != nil {
 		return nil, err
 	}
 
