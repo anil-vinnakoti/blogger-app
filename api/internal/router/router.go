@@ -29,7 +29,7 @@ func Setup(db *gorm.DB) *gin.Engine {
 
 	api := r.Group("/api")
 	// Public routes
-	api.POST("/register", users.RegisterHandler(db))
+	api.POST("/signup", users.RegisterHandler(db))
 	api.POST("/login", users.LoginHandler(db))
 
 	// Protected routes

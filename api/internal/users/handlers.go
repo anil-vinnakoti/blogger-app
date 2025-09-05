@@ -41,6 +41,17 @@ func RegisterHandler(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
+		// Create new session
+		session := models.Session{
+			ID:        generateSessionID(),
+			UserID:    user.ID,
+			ExpiresAt: time.Now().Add(24 * time.Hour),
+		}
+		db.Create(&session)
+
+		// Set session_id cookie
+		c.SetCookie("session_id", session.ID, 3600*24, "/", "", false, true)
+
 		c.JSON(http.StatusOK, gin.H{"message": "user registered"})
 	}
 }
