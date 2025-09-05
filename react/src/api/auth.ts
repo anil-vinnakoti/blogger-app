@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import api from "./client";
+import { httpRequest } from "./client";
 
 interface User {
   id: number;
@@ -12,10 +12,16 @@ interface LoginCredentials {
   password: string;
 }
 
-export function useLogin() {
-  return useMutation<User, Error, LoginCredentials>({
+export function useLoginOrSignUp(url: string) {
+  return useMutation<User, string, LoginCredentials>({
     mutationFn: async (credentials: LoginCredentials) => {
-      const { data } = await api.post<User>("/login", credentials);
+      const { data } = await httpRequest({
+        method: "post",
+        url,
+        data: credentials
+      })
+        .then((res) => Promise.resolve(res.data))
+        .catch((err) => Promise.reject(err.data.error));
       return data; // must match User
     }
   });
@@ -23,15 +29,17 @@ export function useLogin() {
 
 // Logout mutation
 export function useLogout() {
-  return useMutation<void, Error, void>({
+  return useMutation<void, string, void>({
     mutationFn: async (): Promise<void> => {
-      await api.post("/logout");
+      await httpRequest({ method: "post", url: "/logout" })
+        .then((res) => Promise.resolve(res.data))
+        .catch((err) => Promise.reject(err.data.error));
     }
   });
 }
 
 // Session check (just async function, not a mutation)
 export async function checkSession(): Promise<User> {
-  const { data } = await api.get<User>("/me");
+  const { data } = await httpRequest({ method: "get", url: "/me" });
   return data;
 }

@@ -20,7 +20,15 @@ export default function Header() {
         {!isAuthenticated ? (
           <>
             <button className="px-3 py-1 rounded-lg border-2 transition font-bold">
-              <span className="align-[2px]">Sign Up</span>
+              <span
+                className="align-[2px]"
+                onClick={(event) => {
+                  event.preventDefault();
+                  navigate("/signup");
+                }}
+              >
+                Sign Up
+              </span>
             </button>
             <button
               className="px-3 py-1 rounded-lg border-2 align-top transition font-bold"

@@ -1,15 +1,15 @@
-import { usePosts, useCreatePost } from "../api/posts";
+// import { usePosts, useCreatePost } from "../api/posts";
 
 export default function Posts() {
-  const { data: posts, isLoading } = usePosts();
-  const createPost = useCreatePost();
+  // const { data: posts, isLoading } = usePosts();
+  // const createPost = useCreatePost();
 
-  if (isLoading) return <p>Loading...</p>;
+  // if (isLoading) return <p>Loading...</p>;
 
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Posts</h1>
-      <button
+      {/* <button
         onClick={() =>
           createPost.mutate({ title: "New Post", content: "Hello World!" })
         }
@@ -25,7 +25,7 @@ export default function Posts() {
             <p>{p.content}</p>
           </li>
         ))}
-      </ul>
+      </ul> */}
     </div>
   );
 }

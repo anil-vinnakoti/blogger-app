@@ -1,19 +1,19 @@
 import { useState } from "react";
-import { useLogin } from "../api/auth";
+import { useLoginOrSignUp } from "../api/auth";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 
 export default function LoginOrSignup() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const login = useLogin();
+  const location = useLocation();
+  const loginOrSignup = useLoginOrSignUp(location.pathname);
   const { setIsAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    login.mutate(
+    loginOrSignup.mutate(
       { username, password },
       {
         onSuccess: () => {
@@ -59,8 +59,8 @@ export default function LoginOrSignup() {
           </Link>
         </div>
       </form>
-      {login.isError && (
-        <p className="text-red-500 mt-2">Invalid credentials</p>
+      {loginOrSignup.isError && (
+        <p className="text-red-500 mt-2">{loginOrSignup.error}</p>
       )}
     </div>
   );
