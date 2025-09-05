@@ -1,10 +1,13 @@
 // src/components/Header.tsx
 import React from "react";
 import { useTheme } from "../hooks/useTheme";
-import { Moon, Sun } from "lucide-react"; // install: npm i lucide-react
+import { Moon, Sun } from "lucide-react";
+import LogoutButton from "./Logout";
+import { useAuth } from "../context/AuthContext";
 
 export default function Header() {
   const { theme, toggleTheme } = useTheme();
+  const { isAuthenticated } = useAuth();
 
   return (
     <header className="flex items-center justify-between px-6 py-4 shadow-md">
@@ -12,12 +15,18 @@ export default function Header() {
 
       <div className="flex items-center space-x-4">
         {/* Navigation Buttons */}
-        <button className="px-3 py-1 rounded-lg border-2 transition font-bold">
-          <span className="align-[2px]">Sign Up</span>
-        </button>
-        <button className="px-3 py-1 rounded-lg border-2 align-top transition font-bold">
-          <span className="align-[2px]">Login</span>
-        </button>
+        {!isAuthenticated ? (
+          <>
+            <button className="px-3 py-1 rounded-lg border-2 transition font-bold">
+              <span className="align-[2px]">Sign Up</span>
+            </button>
+            <button className="px-3 py-1 rounded-lg border-2 align-top transition font-bold">
+              <span className="align-[2px]">Login</span>
+            </button>
+          </>
+        ) : (
+          <LogoutButton />
+        )}
 
         {/* Dark Mode Toggle */}
         <button

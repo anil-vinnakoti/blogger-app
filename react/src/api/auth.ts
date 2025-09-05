@@ -15,8 +15,6 @@ interface LoginCredentials {
 export function useLogin() {
   return useMutation<User, Error, LoginCredentials>({
     mutationFn: async (credentials: LoginCredentials) => {
-      console.log("hi");
-
       const { data } = await api.post<User>("/login", credentials);
       return data; // must match User
     }
@@ -27,7 +25,7 @@ export function useLogin() {
 export function useLogout() {
   return useMutation<void, Error, void>({
     mutationFn: async (): Promise<void> => {
-      await api.post("/auth/logout");
+      await api.post("/logout");
     }
   });
 }
