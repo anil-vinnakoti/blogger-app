@@ -84,6 +84,25 @@ func LoginHandler(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+func LogoutHandler(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		sessonId, err := c.Cookie("session_id")
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "no active session"})
+			return
+		}
+
+		if err := db.Delete(&models.Session{}, "id = ?", sessonId).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to logout"})
+			return
+		}
+
+		//clear cookie in client
+		c.SetCookie("session_id", "", -1, "/", "", false, true)
+		c.JSON(http.StatusOK, gin.H{"message": "logged out"})
+	}
+}
+
 // MeHandler - get current logged-in user from session
 func MeHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {

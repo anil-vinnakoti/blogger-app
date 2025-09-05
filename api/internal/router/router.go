@@ -36,6 +36,7 @@ func Setup(db *gorm.DB) *gin.Engine {
 	api.Use(auth.SessionMiddleware(db))
 
 	api.GET("/me", users.MeHandler(db))
+	api.POST("/logout", users.LogoutHandler(db))
 	api.GET("/users", users.GetUsers(db))
 
 	return r
