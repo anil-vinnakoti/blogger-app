@@ -4,10 +4,12 @@ import { useTheme } from "../hooks/useTheme";
 import { Moon, Sun } from "lucide-react";
 import LogoutButton from "./Logout";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Header() {
   const { theme, toggleTheme } = useTheme();
   const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <header className="flex items-center justify-between px-6 py-4 shadow-md">
@@ -20,7 +22,13 @@ export default function Header() {
             <button className="px-3 py-1 rounded-lg border-2 transition font-bold">
               <span className="align-[2px]">Sign Up</span>
             </button>
-            <button className="px-3 py-1 rounded-lg border-2 align-top transition font-bold">
+            <button
+              className="px-3 py-1 rounded-lg border-2 align-top transition font-bold"
+              onClick={(event) => {
+                event.preventDefault();
+                navigate("/login");
+              }}
+            >
               <span className="align-[2px]">Login</span>
             </button>
           </>

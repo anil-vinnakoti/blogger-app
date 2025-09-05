@@ -7,10 +7,6 @@ import LoginOrSignup from "./pages/LoginOrSignup";
 export default function App() {
   const { isAuthenticated, user } = useAuth();
 
-  if (user === null && !isAuthenticated) {
-    return <LoginOrSignup />;
-  }
-
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -21,7 +17,6 @@ export default function App() {
         path="/posts"
         element={isAuthenticated ? <Posts /> : <Navigate to="/login" />}
       />
-      <Route path="/loginOrSignup" element={<LoginOrSignup />} />
     </Routes>
   );
 }
