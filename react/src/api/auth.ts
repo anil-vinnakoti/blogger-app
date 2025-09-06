@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { httpRequest } from "./client";
 
 interface User {
@@ -39,7 +39,15 @@ export function useLogout() {
 }
 
 // Session check (just async function, not a mutation)
-export async function checkSession(): Promise<User> {
-  const { data } = await httpRequest({ method: "get", url: "/me" });
-  return data;
+export function useCheckSession() {
+  return useQuery<User, Error, User, ["session"]>({
+    queryKey: ["session"],
+    queryFn: async () => {
+      return await httpRequest<User>({ method: "get", url: "/me" })
+        .then((res) => res.data)
+        .catch((err) => {
+          throw new Error(err.data?.error || "Session check failed");
+        });
+    }
+  });
 }

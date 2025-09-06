@@ -1,17 +1,12 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useEffect
-} from "react";
-import { checkSession } from "../api/auth";
+import { createContext, useContext, useState, ReactNode } from "react";
 
 interface AuthContextType {
   isAuthenticated: boolean;
   user: any | null;
   setIsAuthenticated: (value: boolean) => void;
   setUser: (user: any | null) => void;
+  isSessionLoading: boolean;
+  setIsSessionLoading: (value: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -19,23 +14,18 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<any | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const userData = await checkSession();
-        setUser(userData);
-        setIsAuthenticated(true);
-      } catch {
-        setUser(null);
-        setIsAuthenticated(false);
-      }
-    })();
-  }, []);
+  const [isSessionLoading, setIsSessionLoading] = useState(true);
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, user, setIsAuthenticated, setUser }}
+      value={{
+        isAuthenticated,
+        user,
+        setIsAuthenticated,
+        setUser,
+        isSessionLoading,
+        setIsSessionLoading
+      }}
     >
       {children}
     </AuthContext.Provider>
